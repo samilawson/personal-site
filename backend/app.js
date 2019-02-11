@@ -1,41 +1,102 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// call all the required packages
+const express = require("express");
+const bodyParser = require("body-parser");
+const multer = require("multer");
+const fs = require("fs")
+const MongoClient = require("mongodb").MongoClient;
+const myurl = "mongodb://localhost:27017";
+var ObjectId = require('mongodb').ObjectID;
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, __dirname + "/public/images");
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now());
+  }
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+var upload = multer({ storage: storage });
+//CREATE EXPRESS APP
+const app = express();
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+MongoClient.connect(myurl, (err, client) => {
+  if (err) return console.log(err);
+  db = client.db("test");
+  app.listen(3000, () => {
+    console.log("listening on 3000");
+  });
 });
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+//ROUTES WILL GO HERE
+app.get("/", function(req, res) {
+  res.sendFile(__dirname + "/views/index.html");
+});
+app.post("/uploadfile", upload.single("myFile"), (req, res, next) => {
+  const file = req.file;
+  if (!file) {
+    const error = new Error("Please upload a file");
+    error.httpStatusCode = 400;
+    return next(error);
+  }
+  res.send(file);
+});
+//Uploading multiple files
+app.post("/uploadmultiple", upload.array("myFiles", 12), (req, res, next) => {
+  const files = req.files;
+  if (!files) {
+    const error = new Error("Please choose files");
+    error.httpStatusCode = 400;
+    return next(error);
+  }
+
+  res.send(files);
+});
+app.post("/uploadphoto", upload.single("myImage"), (req, res) => {
+  var img = fs.readFileSync(req.file.path);
+  var encode_image = img.toString("base64");
+  // Define a JSONobject for the image attributes for saving to database
+
+  var finalImg = {
+    contentType: req.file.mimetype,
+    image: new Buffer(encode_image, "base64")
+  };
+  db.collection("quotes").insertOne(finalImg, (err, result) => {
+    console.log(result);
+
+    if (err) return console.log(err);
+
+    console.log("saved to database");
+    res.redirect("/");
+  });
+});
+
+app.get('/photos', (req, res) => {
+    db.collection('quotes').find().toArray((err, result) => {
+     
+          const imgArray= result.map(element => element._id);
+                console.log(imgArray);
+     
+       if (err) return console.log(err)
+       res.send(imgArray)
+     
+      })
+    });
+
+    app.get('/photos/:id', (req, res) => {
+        var filename = req.params.id;
+         console.log(filename)
+        db.collection('quotes').findOne({'_id': ObjectId(filename) }, (err, result) => {
+         
+            if (err) return console.log(err)
+         
+           res.contentType('image/jpeg');
+           res.send(result.image.buffer)
+           
+            
+          })
+        })
 
 module.exports = app;

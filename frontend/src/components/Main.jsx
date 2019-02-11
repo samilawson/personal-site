@@ -1,58 +1,55 @@
 import React, { Component } from "react";
+import axios from 'axios'
 
 class Main extends Component {
-  constructor(props) {
-    super(props);
-
+  constructor() {
+    super();
     this.state = {
-      imageURL: ""
+      description: '',
+      selectedFile: '',
     };
-
-    this.handleUploadImage = this.handleUploadImage.bind(this);
+  }
+  onChange = (e) => {
+    switch (e.target.name) {
+      case 'selectedFile':
+        this.setState({ selectedFile: e.target.files[0] });
+        break;
+      default:
+        this.setState({ [e.target.name]: e.target.value });
+    }
   }
 
-  handleUploadImage(ev) {
-    ev.preventDefault();
+  onSubmit = (e) => {
+    e.preventDefault();
+    const { description, selectedFile } = this.state;
+    let formData = new FormData();
 
-    const data = new FormData();
-    data.append("file", this.uploadInput.files[0]);
-    data.append("filename", this.fileName.value);
+    formData.append('description', description);
+    formData.append('selectedFile', selectedFile);
 
-    fetch("http://localhost:8000/upload", {
-      method: "POST",
-      body: data
-    }).then(response => {
-      response.json().then(body => {
-        this.setState({ imageURL: `http://localhost:8000/${body.file}` });
+    axios.post('/upload', formData)
+      .then((result) => {
+        // access results...
+        console.log('success')
       });
-    });
   }
 
   render() {
+    const { description, selectedFile } = this.state;
     return (
-      <form onSubmit={this.handleUploadImage}>
-        <div>
-          <input
-            ref={ref => {
-              this.uploadInput = ref;
-            }}
-            type="file"
-          />
-        </div>
-        <div>
-          <input
-            ref={ref => {
-              this.fileName = ref;
-            }}
-            type="text"
-            placeholder="Enter a filename"
-          />
-        </div>
-        <br />
-        <div>
-          <button>Upload</button>
-        </div>
-        <img src={this.state.imageURL} alt="img" />
+      <form onSubmit={this.onSubmit}>
+        <input
+          type="text"
+          name="description"
+          value={description}
+          onChange={this.onChange}
+        />
+        <input
+          type="file"
+          name="selectedFile"
+          onChange={this.onChange}
+        />
+        <button type="submit">Submit</button>
       </form>
     );
   }
