@@ -61,7 +61,7 @@ app.post("/uploadphoto", upload.single("myImage"), (req, res) => {
 
   var finalImg = {
     contentType: req.file.mimetype,
-    image: new Buffer(encode_image, "base64")
+    image: Buffer.from(encode_image, "base64")
   };
   db.collection("quotes").insertOne(finalImg, (err, result) => {
     console.log(result);
@@ -72,7 +72,19 @@ app.post("/uploadphoto", upload.single("myImage"), (req, res) => {
     res.redirect("/");
   });
 });
-
+app.get('/photos/:id', (req, res) => {
+    var filename = req.params.id;
+     console.log(filename)
+    db.collection('quotes').findOne({'_id': ObjectId(filename) }, (err, result) => {
+     
+        if (err) return console.log(err)
+     
+       res.contentType('image/jpeg');
+       res.send(result.image.buffer)
+       
+        
+      })
+    })
 app.get('/photos', (req, res) => {
     db.collection('quotes').find().toArray((err, result) => {
      
@@ -85,18 +97,6 @@ app.get('/photos', (req, res) => {
       })
     });
 
-    app.get('/photos/:id', (req, res) => {
-        var filename = req.params.id;
-         console.log(filename)
-        db.collection('quotes').findOne({'_id': ObjectId(filename) }, (err, result) => {
-         
-            if (err) return console.log(err)
-         
-           res.contentType('image/jpeg');
-           res.send(result.image.buffer)
-           
-            
-          })
-        })
+    
 
 module.exports = app;
