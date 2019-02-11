@@ -56,6 +56,7 @@ app.post("/uploadmultiple", upload.array("myFiles", 12), (req, res, next) => {
 });
 app.post("/uploadphoto", upload.single("myImage"), (req, res) => {
   var img = fs.readFileSync(req.file.path);
+  fs.renameSync(req.file.path, req.file.path.replace(req.file.filename, req.body.fname));
   var encode_image = img.toString("base64");
   // Define a JSONobject for the image attributes for saving to database
 
