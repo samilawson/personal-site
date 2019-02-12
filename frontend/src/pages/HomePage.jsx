@@ -1,11 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class HomePage extends Component {
+import NavBar from './components/NavBar'
+
+const HomePage = () => (
+    <div>
+        <NavBar />
+    </div>
+
+)
 
 
-    render() {
-        return
-    }
-}
+    
+
 
 export default HomePage;
