@@ -7,3 +7,5 @@ class HomePage extends Component {
         return
     }
 }
+
+export default HomePage;
