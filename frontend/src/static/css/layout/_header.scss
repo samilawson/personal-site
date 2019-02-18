@@ -1,0 +1,118 @@
+/* Header */
+
+#header {
+    @include vendor('display', 'flex');
+    @include vendor('flex-direction', 'column');
+    @include vendor('justify-content', 'space-between');
+    background: _palette(header, bg);
+    color: _palette(header, fg);
+    height: 100%;
+    overflow-y: auto;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    width: $size-header;
+
+    @if _misc(header-side) == 'right' {
+        right: 0;
+    }
+    @else {
+        left: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: _palette(header, fg-bold);
+
+        a {
+            color: _palette(header, fg-bold);
+        }
+    }
+
+    header {
+        p {
+            color: _palette(header, fg-light);
+        }
+    }
+
+    a {
+        color: _palette(header, fg);
+
+        &:hover {
+            color: _palette(header, fg-bold) !important;
+        }
+    }
+
+    > header {
+        @include vendor('flex-shrink', '0');
+        padding: 3em;
+
+        .avatar {
+            display: block;
+            margin: 0 auto _size(element-margin) auto;
+            width: 8em;
+        }
+
+        h1 {
+            font-size: 1.75em;
+            margin: 0;
+        }
+
+        p {
+            color: _palette(header, fg);
+            font-style: italic;
+            margin: 1em 0 0 0;
+        }
+    }
+
+    > footer {
+        @include vendor('flex-shrink', '0');
+        bottom: 0;
+        left: 0;
+        padding: 2em;
+        width: 100%;
+
+        .icons {
+            margin: 0;
+
+            li {
+                a {
+                    color: _palette(header, fg-light);
+                }
+            }
+        }
+    }
+
+    > nav {
+        @include vendor('flex-grow', '1');
+
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            li {
+                border-top: solid _size(border-width) _palette(header, border);
+                display: block;
+                padding: 0;
+
+                a {
+                    @include vendor('transition', 'none');
+                    border: 0;
+                    color: _palette(header, fg-bold) !important;
+                    display: block;
+                    padding: 0.85em 0;
+                    text-decoration: none;
+
+                    &.active {
+                        background: _palette(bg);
+                        color: _palette(header, bg) !important;
+                    }
+                }
+
+                &:first-child {
+                    border-top: 0;
+                }
+            }
+        }
+    }
+}

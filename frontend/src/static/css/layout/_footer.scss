@@ -1,0 +1,33 @@
+/* Footer */
+
+#footer {
+    background: #fafafa;
+    border-top: 0;
+    color: #c0c0c0;
+    overflow: hidden;
+    padding: 4em 0 2em 0;
+
+    .copyright {
+        line-height: 1em;
+        list-style: none;
+        padding: 0;
+
+        li {
+            border-left: solid 1px #d4d4d4;
+            display: inline-block;
+            font-size: 0.8em;
+            margin-left: 1em;
+            padding-left: 1em;
+
+            &:first-child {
+                border-left: 0;
+                margin-left: 0;
+                padding-left: 0;
+            }
+
+            a {
+                color: inherit;
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+/* Wrapper */
+
+#wrapper {
+    background: _palette(bg);
+
+    @if _misc(header-side) == 'right' {
+        padding-right: $size-header;
+    }
+    @else {
+        padding-left: $size-header;
+    }
+}
