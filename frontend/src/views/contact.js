@@ -67,7 +67,7 @@ const Contact = () => {
         newIdx += 1;
         newChar = 0;
       }
-      if (newIdx === messages.length) {
+      if(newIdx === messages.length) {
         setIsActive(false);
       } else {
         updateMessage(messages[newIdx].slice(0, newChar));
