@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Helmet from "react-helmet";
-import { FontAwesome } from "@fontawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fontawesome/react-fontawesome";
 
 import Main from "../layouts/Main";
 
